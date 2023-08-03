@@ -44,11 +44,10 @@ class OpenWeatherConnection(ExperimentalBaseConnection):
         if len(res) > 0:
             return res[0]
 
-    def get_one_call(self, city, exclude=None, units=["metrics"], ttl=900):
+    def get_one_call(self, lat, lon, exclude=None, units=["metrics"], ttl=900):
         """ Get current weather, minute forecast for 1 hour, hourly forecast for 48 hours, daily forecast for 8 days and government weather alerts
         https://openweathermap.org/api/one-call-3#current
         """
-        city_geo = self.get_coords(city)
         exclude_part = "" if exclude is None else "&exclude=" + ",".join(exclude)
         units =  ",".join(units)
-        return self.query(api_name="data", version="3.0", endpoint="onecall", query=f"lat={city_geo.lat}&lon={city_geo.lon}{exclude_part}&units={units}", ttl=ttl)
+        return self.query(api_name="data", version="3.0", endpoint="onecall", query=f"lat={lat}&lon={lon}{exclude_part}&units={units}", ttl=ttl)
