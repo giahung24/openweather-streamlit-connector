@@ -85,7 +85,10 @@ st.code(code, language='python')
 city = st.text_input("City name", max_chars=50, value="Paris")
 
 if(st.button("Get weather info")) or city=='Paris':
-    city_geo = conn.get_coords(city)
+    try:
+        city_geo = conn.get_coords(city)
+    except:
+        st.error("City name invalid, try again!")
 
     if city_geo is None:
         st.error("City name not found, try again!")
