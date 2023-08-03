@@ -87,38 +87,38 @@ city = st.text_input("City name", max_chars=50, value="Paris")
 if(st.button("Get weather info")) or city=='Paris':
     try:
         city_geo = conn.get_coords(city)
+        if city_geo is None:
+            st.error("City name not found, try again!")
+        else:
+            res = conn.get_one_call(lon=city_geo.lon, lat=city_geo.lat)
+            alerts = res.alerts if hasattr(res, "alerts") else []
+            current_temp = str(round(res.current.temp-273.15, 2)) + " °C"
+            current_weather = res.current.weather[0] # 
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write(f"### Current weather for {city} ({city_geo.country})") 
+                st.metric("Temperature", current_temp)
+            with col2:
+                st.image(f"http://openweathermap.org/img/wn/{current_weather.icon}@2x.png",width=70)
+                st.write(current_weather.description)
+
+            map_df = pd.DataFrame.from_dict({'latitude':[city_geo.lat], 'longitude':[city_geo.lon]})
+            st.map(map_df, zoom=11, size=0.1)
+            
+            if alerts:
+                st.markdown("### :warning: Alerts")
+                for alert in alerts:
+                    start = datetime.fromtimestamp(alert.start)
+                    end = datetime.fromtimestamp(alert.end)
+                    st.markdown(f"#### {alert.event}")
+                    message = f"""From {start} to {end}  
+{alert.description}"""
+                    st.warning(message)
     except:
         st.error("City name invalid, try again!")
 
-    if city_geo is None:
-        st.error("City name not found, try again!")
-    else:
-        res = conn.get_one_call(lon=city_geo.lon, lat=city_geo.lat)
-        alerts = res.alerts if hasattr(res, "alerts") else []
-        current_temp = str(round(res.current.temp-273.15, 2)) + " °C"
-        current_weather = res.current.weather[0] # 
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            st.write(f"### Current weather for {city} ({city_geo.country})") 
-            st.metric("Temperature", current_temp)
-        with col2:
-            st.image(f"http://openweathermap.org/img/wn/{current_weather.icon}@2x.png",width=70)
-            st.write(current_weather.description)
-
-        map_df = pd.DataFrame.from_dict({'latitude':[city_geo.lat], 'longitude':[city_geo.lon]})
-        st.map(map_df, zoom=11, size=0.1)
-        
-        if alerts:
-            st.markdown("### :warning: Alerts")
-            for alert in alerts:
-                start = datetime.fromtimestamp(alert.start)
-                end = datetime.fromtimestamp(alert.end)
-                st.markdown(f"#### {alert.event}")
-                message = f"""From {start} to {end}
-
-{alert.description}"""
-                st.warning(message)
+    
 
 
 """ 
