@@ -41,6 +41,7 @@ class OpenWeatherConnection(ExperimentalBaseConnection):
             namedspace object of API response (only the first result in list)
         """
         res = self.query(api_name="geo", version="1.0", endpoint="direct", query=f"q={city}", ttl=ttl)
+        print(res)
         if len(res) > 0:
             return res[0]
 

@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from connection import OpenWeatherConnection
-
+import traceback 
 
 st.set_page_config(page_title="OpenWeatherAPI Connection for Streamlit")
 st.title("OpenWeatherAPI Connection for Streamlit")
@@ -117,7 +117,7 @@ if(st.button("Get weather info")) or city=='Paris':
                     st.warning(message)
     except:
         st.error("City name invalid, try again!")
-
+        traceback.print_exc()
     
 
 
