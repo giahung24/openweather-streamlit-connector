@@ -1,5 +1,6 @@
 import streamlit as st
 
+from datetime import datetime
 from connection import OpenWeatherConnection
 
 
@@ -95,9 +96,14 @@ with col2:
     st.write(current_weather.description)
 
 st.markdown("### :warning: Alerts")
-for alert in alerts:    
+for alert in alerts:
+    start = datetime.fromtimestamp(alert.start)
+    end = datetime.fromtimestamp(alert.end)
     st.markdown(f"#### {alert.event}")
-    st.warning(f"{alert.description}")
+    message = f"""From {start} to {end}
+
+ {alert.description}"""
+    st.warning(message)
 
 
 """ 
@@ -118,8 +124,13 @@ with col2:
     st.write(current_weather.description)
 
 st.markdown("### :warning: Alert")
-for alert in alerts:    
+for alert in alerts:
+    start = datetime.fromtimestamp(alert.start)
+    end = datetime.fromtimestamp(alert.end)
     st.markdown(f"#### {alert.event}")
-    st.markdown(f"{alert.description}")
+    message = f'''From {start} to {end}
+
+ {alert.description}'''
+    st.warning(message)
 """
 st.code(code, language='python')
